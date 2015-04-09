@@ -2446,10 +2446,22 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
         CBlockIndex* pindexPrev = (*mi).second;
         int nHeight = pindexPrev->nHeight+1;
 
-        if (nHeight > 135031)
+        if (nHeight > 135081)
         {
             const CTxIn& txin = pblock->vtx[1].vin[0];
-            static const CBitcoinAddress scamWallet1 ("PK29svrRJrKNpRX2VMyWAfAvNouPd3C1kg", "PNyAFjkd1Rkx6qiZGpVtjsrnxBzkrCFchH", "PPKT2ZLtoaagH68rX3y9iXGbcj3PoeF4K1", "P9hi3KjMQhSDx5umtGMp62ob3sA7tJP3Gb", "PC2JwM8M5dKgje9F8CYvQ8mnrowfhaj511", "P9P6vzmZy7aggW6xzvtehuQkg4AhDKC8Gd", "PRTwwhAWZuNemNYd72GY6wtFnA8CnJs82p", "PJ8mSYiEiG8NjffSv5YuAatw689G8UFYuW", "PLAm8mqqy1PcfGYz6e9LHa9ai5NHtyE7Xw", "PF9XQqA5w52s3bUsCKjUny5W7yBePypXU6", "PCy17jqo4nU8jwcrBjoS5CbWnhkUrVJGac", "PV223iYXqrjLPbFyte6yFUZ9b2AVt9RifR", "PK5i3haZx334Pzt6j5MLeT1ugZcPxmqr6m");
+            static const CBitcoinAddress scamWallet1 ("PK29svrRJrKNpRX2VMyWAfAvNouPd3C1kg");
+            static const CBitcoinAddress scamWallet2 ("PNyAFjkd1Rkx6qiZGpVtjsrnxBzkrCFchH");
+            static const CBitcoinAddress scamWallet3 ("PPKT2ZLtoaagH68rX3y9iXGbcj3PoeF4K1");
+            static const CBitcoinAddress scamWallet4 ("P9hi3KjMQhSDx5umtGMp62ob3sA7tJP3Gb");
+            static const CBitcoinAddress scamWallet5 ("PC2JwM8M5dKgje9F8CYvQ8mnrowfhaj511");
+            static const CBitcoinAddress scamWallet6 ("P9P6vzmZy7aggW6xzvtehuQkg4AhDKC8Gd");
+            static const CBitcoinAddress scamWallet7 ("PRTwwhAWZuNemNYd72GY6wtFnA8CnJs82p");
+            static const CBitcoinAddress scamWallet8 ("PJ8mSYiEiG8NjffSv5YuAatw689G8UFYuW");
+            static const CBitcoinAddress scamWallet9 ("PLAm8mqqy1PcfGYz6e9LHa9ai5NHtyE7Xw");
+            static const CBitcoinAddress scamWallet10 ("PF9XQqA5w52s3bUsCKjUny5W7yBePypXU6");
+            static const CBitcoinAddress scamWallet11 ("PCy17jqo4nU8jwcrBjoS5CbWnhkUrVJGac");
+            static const CBitcoinAddress scamWallet12 ("PV223iYXqrjLPbFyte6yFUZ9b2AVt9RifR");
+            static const CBitcoinAddress scamWallet13 ("PK5i3haZx334Pzt6j5MLeT1ugZcPxmqr6m");
             uint256 hashBlock;
             CTransaction txPrev;
 
@@ -2458,7 +2470,7 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
                 if (ExtractDestination(txPrev.vout[txin.prevout.n].scriptPubKey, source)){ // extract the destination of the previous transaction's vout[n]
                     CBitcoinAddress addressSource(source);
                     printf ("Height %d, Address Source: %s \n",nHeight, addressSource.ToString().c_str());
-                    if (scamWallet1.Get() == addressSource.Get()){
+                    if (scamWallet1.Get() == addressSource.Get() || scamWallet2.Get() == addressSource.Get() || scamWallet3.Get() == addressSource.Get() || scamWallet4.Get() == addressSource.Get() || scamWallet5.Get() == addressSource.Get() || scamWallet6.Get() == addressSource.Get() || scamWallet7.Get() == addressSource.Get() || scamWallet8.Get() == addressSource.Get() || scamWallet9.Get() == addressSource.Get() || scamWallet10.Get() == addressSource.Get() || scamWallet11.Get() == addressSource.Get() || scamWallet12.Get() == addressSource.Get() || scamWallet13.Get() == addressSource.Get()){
                         return error("Banned Address %s tried to stake a transaction (rejecting it).", addressSource.ToString().c_str());
                    }
                 }
