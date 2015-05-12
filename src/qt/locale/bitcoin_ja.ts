@@ -1,4 +1,4 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="ja" version="2.1">
+﻿<?xml version="1.0" ?><!DOCTYPE TS><TS language="ja" version="2.1">
 <context>
     <name>AboutDialog</name>
     <message>
@@ -1765,8 +1765,8 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
     </message>
     <message>
         <location filename="../sendcoinsdialog.cpp" line="-173"/>
-        <source>Enter a PayCon address (e.g. PfwYhBmGXcFP2Po1NpRUEiK8km2)</source>
-        <translation>ブラックコインアドレスの入力 (例；PfwYhBmGXcFP2Po1NpRUEiK8km2)</translation>
+        <source>Enter a PayCon address (e.g. CfwYhBmGXcFP2Po1NpRUEiK8km2)</source>
+        <translation>ブラックコインアドレスの入力 (例；CfwYhBmGXcFP2Po1NpRUEiK8km2)</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -1909,8 +1909,8 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
     </message>
     <message>
         <location line="+18"/>
-        <source>The address to send the payment to  (e.g. PfwYhBmGXcFP2Po1NpRUEiK8km2)</source>
-        <translation>支払いへ送るアドレス (例：PfwYhBmGXcFP2Po1NpRUEiK8km2)</translation>
+        <source>The address to send the payment to  (e.g. CfwYhBmGXcFP2Po1NpRUEiK8km2)</source>
+        <translation>支払いへ送るアドレス (例：CfwYhBmGXcFP2Po1NpRUEiK8km2)</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -1939,8 +1939,8 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
     </message>
     <message>
         <location filename="../sendcoinsentry.cpp" line="+1"/>
-        <source>Enter a PayCon address (e.g. PfwYhBmGXcFP2Po1NpRUEiK8km2)</source>
-        <translation>ブラックコインアドレスの入力 (例；PfwYhBmGXcFP2Po1NpRUEiK8km2)</translation>
+        <source>Enter a PayCon address (e.g. CfwYhBmGXcFP2Po1NpRUEiK8km2)</source>
+        <translation>ブラックコインアドレスの入力 (例；CfwYhBmGXcFP2Po1NpRUEiK8km2)</translation>
     </message>
 </context>
 <context>
@@ -1963,8 +1963,8 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
     </message>
     <message>
         <location line="+18"/>
-        <source>The address to sign the message with (e.g. PfwYhBmGXcFP2Po1NpRUEiK8km2)</source>
-        <translation>メッセージの署名するアドレス(例：PfwYhBmGXcFP2Po1NpRUEiK8km2)</translation>
+        <source>The address to sign the message with (e.g. CfwYhBmGXcFP2Po1NpRUEiK8km2)</source>
+        <translation>メッセージの署名するアドレス(例：CfwYhBmGXcFP2Po1NpRUEiK8km2)</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -2027,8 +2027,8 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
     </message>
     <message>
         <location line="+21"/>
-        <source>The address the message was signed with (e.g. PfwYhBmGXcFP2Po1NpRUEiK8km2)</source>
-        <translation>メッセージの署名するアドレス(例：PfwYhBmGXcFP2Po1NpRUEiK8km2)</translation>
+        <source>The address the message was signed with (e.g. CfwYhBmGXcFP2Po1NpRUEiK8km2)</source>
+        <translation>メッセージの署名するアドレス(例：CfwYhBmGXcFP2Po1NpRUEiK8km2)</translation>
     </message>
     <message>
         <location line="+40"/>
@@ -2043,8 +2043,8 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
     <message>
         <location filename="../signverifymessagedialog.cpp" line="+27"/>
         <location line="+3"/>
-        <source>Enter a PayCon address (e.g. PfwYhBmGXcFP2Po1NpRUEiK8km2)</source>
-        <translation>ブラックコインのアドレスを入力(例：PfwYhBmGXcFP2Po1NpRUEiK8km2)</translation>
+        <source>Enter a PayCon address (e.g. CfwYhBmGXcFP2Po1NpRUEiK8km2)</source>
+        <translation>ブラックコインのアドレスを入力(例：CfwYhBmGXcFP2Po1NpRUEiK8km2)</translation>
     </message>
     <message>
         <location line="-2"/>

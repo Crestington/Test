@@ -1766,8 +1766,8 @@ Cela implique que des frais à hauteur d&apos;au moins %2 seront nécessaires.</
     </message>
     <message>
         <location filename="../sendcoinsdialog.cpp" line="-173"/>
-        <source>Enter a PayCon address (e.g. PfwYhBmGXcFP2Po1NpRUEiK8km2)</source>
-        <translation>Entrer une adresse PayCon (par ex: PfwYhBmGXcFP2Po1NpRUEiK8km2)</translation>
+        <source>Enter a PayCon address (e.g. CfwYhBmGXcFP2Po1NpRUEiK8km2)</source>
+        <translation>Entrer une adresse PayCon (par ex: CfwYhBmGXcFP2Po1NpRUEiK8km2)</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -1910,8 +1910,8 @@ Cela implique que des frais à hauteur d&apos;au moins %2 seront nécessaires.</
     </message>
     <message>
         <location line="+18"/>
-        <source>The address to send the payment to  (e.g. PfwYhBmGXcFP2Po1NpRUEiK8km2)</source>
-        <translation>Adresse destinataire du paiement (ex: PfwYhBmGXcFP2Po1NpRUEiK8km2)</translation>
+        <source>The address to send the payment to  (e.g. CfwYhBmGXcFP2Po1NpRUEiK8km2)</source>
+        <translation>Adresse destinataire du paiement (ex: CfwYhBmGXcFP2Po1NpRUEiK8km2)</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -1940,8 +1940,8 @@ Cela implique que des frais à hauteur d&apos;au moins %2 seront nécessaires.</
     </message>
     <message>
         <location filename="../sendcoinsentry.cpp" line="+1"/>
-        <source>Enter a PayCon address (e.g. PfwYhBmGXcFP2Po1NpRUEiK8km2)</source>
-        <translation>Entrer une adresse PayCon (ex: PfwYhBmGXcFP2Po1NpRUEiK8km2)</translation>
+        <source>Enter a PayCon address (e.g. CfwYhBmGXcFP2Po1NpRUEiK8km2)</source>
+        <translation>Entrer une adresse PayCon (ex: CfwYhBmGXcFP2Po1NpRUEiK8km2)</translation>
     </message>
 </context>
 <context>
@@ -1964,8 +1964,8 @@ Cela implique que des frais à hauteur d&apos;au moins %2 seront nécessaires.</
     </message>
     <message>
         <location line="+18"/>
-        <source>The address to sign the message with (e.g. PfwYhBmGXcFP2Po1NpRUEiK8km2)</source>
-        <translation>Entrer une adresse PayCon (ex: PfwYhBmGXcFP2Po1NpRUEiK8km2)</translation>
+        <source>The address to sign the message with (e.g. CfwYhBmGXcFP2Po1NpRUEiK8km2)</source>
+        <translation>Entrer une adresse PayCon (ex: CfwYhBmGXcFP2Po1NpRUEiK8km2)</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -2028,8 +2028,8 @@ Cela implique que des frais à hauteur d&apos;au moins %2 seront nécessaires.</
     </message>
     <message>
         <location line="+21"/>
-        <source>The address the message was signed with (e.g. PfwYhBmGXcFP2Po1NpRUEiK8km2)</source>
-        <translation>L&apos;adresse avec laquelle le message à été signé (ex: PfwYhBmGXcFP2Po1NpRUEiK8km2)</translation>
+        <source>The address the message was signed with (e.g. CfwYhBmGXcFP2Po1NpRUEiK8km2)</source>
+        <translation>L&apos;adresse avec laquelle le message à été signé (ex: CfwYhBmGXcFP2Po1NpRUEiK8km2)</translation>
     </message>
     <message>
         <location line="+40"/>
@@ -2044,8 +2044,8 @@ Cela implique que des frais à hauteur d&apos;au moins %2 seront nécessaires.</
     <message>
         <location filename="../signverifymessagedialog.cpp" line="+27"/>
         <location line="+3"/>
-        <source>Enter a PayCon address (e.g. PfwYhBmGXcFP2Po1NpRUEiK8km2)</source>
-        <translation>Entrer une adresse PayCon (e.g. PfwYhBmGXcFP2Po1NpRUEiK8km2)</translation>
+        <source>Enter a PayCon address (e.g. CfwYhBmGXcFP2Po1NpRUEiK8km2)</source>
+        <translation>Entrer une adresse PayCon (e.g. CfwYhBmGXcFP2Po1NpRUEiK8km2)</translation>
     </message>
     <message>
         <location line="-2"/>
