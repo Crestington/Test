@@ -1,6 +1,6 @@
-// Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2012 The Bitcoin developers
-// Copyright (c) 2014 The PayCon developers
+// Copyright (c) 2009-2015 Satoshi Nakamoto
+// Copyright (c) 2009-2015 The Bitcoin developers
+// Copyright (c) 2015 The PayCon developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #ifndef BITCOIN_WALLET_H
@@ -83,6 +83,7 @@ private:
     int nWalletMaxVersion;
 
 public:
+	bool MintableCoins();
     mutable CCriticalSection cs_wallet;
 
     bool fFileBacked;
@@ -95,6 +96,7 @@ public:
 	std::string strBestAddress;
 	bool fCombine;
 	bool fSplitBlock;
+	unsigned int nHashDrift;
 	
     std::set<int64_t> setKeyPool;
     std::map<CKeyID, CKeyMetadata> mapKeyMetadata;
@@ -103,6 +105,14 @@ public:
     typedef std::map<unsigned int, CMasterKey> MasterKeyMap;
     MasterKeyMap mapMasterKeys;
     unsigned int nMasterKeyMaxID;
+	
+	//MultiSend
+	std::vector<std::pair<std::string, int> > vMultiSend;
+	bool fMultiSend;
+	bool fMultiSendNotify;
+	std::string strMultiSendChangeAddress;
+	int nLastMultiSendHeight;
+	std::vector<std::string> vDisabledAddresses;
 
     CWallet()
     {
@@ -120,6 +130,15 @@ public:
 		strBestAddress = "";
 		fCombine = false;
 		fSplitBlock =  false;
+		nHashDrift = 60;
+		
+		//MultiSend
+		vMultiSend.clear();
+		fMultiSend = false;
+		fMultiSendNotify = false;
+		strMultiSendChangeAddress = "";
+		nLastMultiSendHeight = 0;
+		vDisabledAddresses.clear();
     }
     CWallet(std::string strWalletFileIn)
     {
@@ -138,6 +157,15 @@ public:
 		strBestAddress = "";
 		fCombine = false;
 		fSplitBlock =  false;
+		nHashDrift = 60;
+		
+		//MultiSend
+		vMultiSend.clear();
+		fMultiSend = false;
+		fMultiSendNotify = false;
+		strMultiSendChangeAddress = "";
+		nLastMultiSendHeight = 0;
+		vDisabledAddresses.clear();
     }
 
     std::map<uint256, CWalletTx> mapWallet;
@@ -211,6 +239,7 @@ public:
     int64_t GetStake() const;
     int64_t GetNewMint() const;
 	bool StakeForCharity();
+	bool MultiSend();
     bool CreateTransaction(const std::vector<std::pair<CScript, int64_t> >& vecSend, CWalletTx& wtxNew, CReserveKey& reservekey, int64_t& nFeeRet, int nSplitBlock, const CCoinControl *coinControl=NULL);
     bool CreateTransaction(CScript scriptPubKey, int64_t nValue, CWalletTx& wtxNew, CReserveKey& reservekey, int64_t& nFeeRet, const CCoinControl *coinControl=NULL);
     bool CommitTransaction(CWalletTx& wtxNew, CReserveKey& reservekey);

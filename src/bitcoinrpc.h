@@ -1,6 +1,6 @@
-// Copyright (c) 2010 Satoshi Nakamoto
-// Copyright (c) 2009-2012 The Bitcoin developers
-// Copyright (c) 2014 The PayCon developers
+// Copyright (c) 2010-2015 Satoshi Nakamoto
+// Copyright (c) 2009-2015 The Bitcoin developers
+// Copyright (c) 2015 The PayCon developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -213,6 +213,7 @@ extern json_spirit::Value ccreturnchange(const json_spirit::Array& params, bool 
 extern json_spirit::Value cccustomchange(const json_spirit::Array& params, bool fHelp);
 extern json_spirit::Value ccreset(const json_spirit::Array& params, bool fHelp);
 extern json_spirit::Value ccsend(const json_spirit::Array& params, bool fHelp);
+extern json_spirit::Value multisend(const json_spirit::Array& params, bool fHelp);
 
 extern json_spirit::Value getrawtransaction(const json_spirit::Array& params, bool fHelp); // in rcprawtransaction.cpp
 extern json_spirit::Value listunspent(const json_spirit::Array& params, bool fHelp);

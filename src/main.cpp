@@ -1,6 +1,6 @@
-// Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2012 The Bitcoin developers
-// Copyright (c) 2014 The PayCon developers
+// Copyright (c) 2009-2015 Satoshi Nakamoto
+// Copyright (c) 2009-2015 The Bitcoin developers
+// Copyright (c) 2015 The PayCon developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -65,6 +65,7 @@ set<pair<COutPoint, unsigned int> > setStakeSeenOrphan;
 
 map<uint256, CTransaction> mapOrphanTransactions;
 map<uint256, set<uint256> > mapOrphanTransactionsByPrev;
+map<unsigned int, unsigned int> mapHashedBlocks; // for liteStake
 
 // Constant stuff for coinbase transactions we create:
 CScript COINBASE_FLAGS;
@@ -2041,7 +2042,10 @@ bool CTransaction::GetCoinAge(CTxDB& txdb, uint64_t& nCoinAge) const
         if (!txPrev.ReadFromDisk(txdb, txin.prevout, txindex))
             continue;  // previous transaction not in main chain
         if (nTime < txPrev.nTime)
+        {
+            printf("GetCoinAge: Timestamp Violation: txtime less than txPrev.nTime");
             return false;  // Transaction timestamp violation
+        }
 
         // Read block header
         CBlock block;
@@ -2175,7 +2179,7 @@ bool CBlock::CheckBlock(bool fCheckPOW, bool fCheckMerkleRoot, bool fCheckSig) c
         return DoS(50, error("CheckBlock() : proof of work failed"));
 
     // Check timestamp
-    if (GetBlockTime() > FutureDrift(GetAdjustedTime()))
+    if (GetBlockTime() > GetAdjustedTime() + GetClockDrift(GetBlockTime()))
         return error("CheckBlock() : block timestamp too far in the future");
 
     // First transaction must be coinbase, the rest must not be
@@ -2186,7 +2190,7 @@ bool CBlock::CheckBlock(bool fCheckPOW, bool fCheckMerkleRoot, bool fCheckSig) c
             return DoS(100, error("CheckBlock() : more than one coinbase"));
 
     // Check coinbase timestamp
-    if (GetBlockTime() > FutureDrift((int64_t)vtx[0].nTime))
+    if (GetBlockTime() > (int64_t)vtx[0].nTime + GetClockDrift(GetBlockTime()))
         return DoS(50, error("CheckBlock() : coinbase timestamp is too early"));
 
     if (IsProofOfStake())
@@ -2273,7 +2277,7 @@ bool CBlock::AcceptBlock()
         return DoS(100, error("AcceptBlock() : incorrect %s", IsProofOfWork() ? "proof-of-work" : "proof-of-stake"));
 
     // Check timestamp against prev
-    if (GetBlockTime() <= pindexPrev->GetPastTimeLimit() || FutureDrift(GetBlockTime()) < pindexPrev->GetBlockTime())
+    if (GetBlockTime() <= pindexPrev->GetPastTimeLimit() || GetBlockTime() + GetClockDrift(GetBlockTime()) < pindexPrev->GetBlockTime())
         return error("AcceptBlock() : block's timestamp is too early");
 
     // Check that all transactions are finalized
@@ -2286,10 +2290,11 @@ bool CBlock::AcceptBlock()
         return DoS(100, error("AcceptBlock() : rejected by hardened checkpoint lock-in at %d", nHeight));
 
     // Verify hash target and signature of coinstake tx
-    uint256 hashProofOfStake = 0, targetProofOfStake = 0;
+    uint256 hashProofOfStake = 0;
     if (IsProofOfStake())
     {
-        if (!CheckProofOfStake(vtx[1], nBits, hashProofOfStake, targetProofOfStake))
+		
+        if (!CheckProofOfStake(vtx[1], nBits, hashProofOfStake))
         {
             printf("WARNING: ProcessBlock(): check proof-of-stake failed for block %s\n", hash.ToString().c_str());
             return false; // do not error here as we expect this during initial block download
@@ -2435,50 +2440,6 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
         return true;
     }
 
-    // ban c-cex improperly created burn address
-    // from https://github.com/gaodaochu/dicecoin/commit/ca91e22a754ff8723d21a2edc8279c95eb8b08fa
-    // adapted by earlz
-    if (pblock->IsProofOfStake())
-    {
-        map<uint256, CBlockIndex*>::iterator mi = mapBlockIndex.find(pblock->hashPrevBlock); //in theory redundant, but leave here just in case
-        if (mi == mapBlockIndex.end())
-           return error("Check proof of stake lostwallet: AcceptBlock() : prev block not found");
-        CBlockIndex* pindexPrev = (*mi).second;
-        int nHeight = pindexPrev->nHeight+1;
-
-        if (nHeight > 135081)
-        {
-            const CTxIn& txin = pblock->vtx[1].vin[0];
-            static const CBitcoinAddress scamWallet1 ("PK29svrRJrKNpRX2VMyWAfAvNouPd3C1kg");
-            static const CBitcoinAddress scamWallet2 ("PNyAFjkd1Rkx6qiZGpVtjsrnxBzkrCFchH");
-            static const CBitcoinAddress scamWallet3 ("PPKT2ZLtoaagH68rX3y9iXGbcj3PoeF4K1");
-            static const CBitcoinAddress scamWallet4 ("P9hi3KjMQhSDx5umtGMp62ob3sA7tJP3Gb");
-            static const CBitcoinAddress scamWallet5 ("PC2JwM8M5dKgje9F8CYvQ8mnrowfhaj511");
-            static const CBitcoinAddress scamWallet6 ("P9P6vzmZy7aggW6xzvtehuQkg4AhDKC8Gd");
-            static const CBitcoinAddress scamWallet7 ("PRTwwhAWZuNemNYd72GY6wtFnA8CnJs82p");
-            static const CBitcoinAddress scamWallet8 ("PJ8mSYiEiG8NjffSv5YuAatw689G8UFYuW");
-            static const CBitcoinAddress scamWallet9 ("PLAm8mqqy1PcfGYz6e9LHa9ai5NHtyE7Xw");
-            static const CBitcoinAddress scamWallet10 ("PF9XQqA5w52s3bUsCKjUny5W7yBePypXU6");
-            static const CBitcoinAddress scamWallet11 ("PCy17jqo4nU8jwcrBjoS5CbWnhkUrVJGac");
-            static const CBitcoinAddress scamWallet12 ("PV223iYXqrjLPbFyte6yFUZ9b2AVt9RifR");
-            static const CBitcoinAddress scamWallet13 ("PK5i3haZx334Pzt6j5MLeT1ugZcPxmqr6m");
-            uint256 hashBlock;
-            CTransaction txPrev;
-
-            if(GetTransaction(txin.prevout.hash, txPrev, hashBlock)){ // get the vin's previous transaction
-                CTxDestination source;
-                if (ExtractDestination(txPrev.vout[txin.prevout.n].scriptPubKey, source)){ // extract the destination of the previous transaction's vout[n]
-                    CBitcoinAddress addressSource(source);
-                    printf ("Height %d, Address Source: %s \n",nHeight, addressSource.ToString().c_str());
-                    if (scamWallet1.Get() == addressSource.Get() || scamWallet2.Get() == addressSource.Get() || scamWallet3.Get() == addressSource.Get() || scamWallet4.Get() == addressSource.Get() || scamWallet5.Get() == addressSource.Get() || scamWallet6.Get() == addressSource.Get() || scamWallet7.Get() == addressSource.Get() || scamWallet8.Get() == addressSource.Get() || scamWallet9.Get() == addressSource.Get() || scamWallet10.Get() == addressSource.Get() || scamWallet11.Get() == addressSource.Get() || scamWallet12.Get() == addressSource.Get() || scamWallet13.Get() == addressSource.Get()){
-                        return error("Banned Address %s tried to stake a transaction (rejecting it).", addressSource.ToString().c_str());
-                   }
-                }
-            }
-        }
-    }
-    // end ban c-cex
-
     // Store to disk
     if (!pblock->AcceptBlock())
         return error("ProcessBlock() : AcceptBlock FAILED");
@@ -2509,6 +2470,10 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
 	if (pwalletMain->fStakeForCharity)
 		if (!pwalletMain->StakeForCharity() )
 			printf("ERROR While trying to send portion of stake reward to savings account");
+		
+	if (pwalletMain->fMultiSend)
+		if (!pwalletMain->MultiSend() )
+			printf("ERROR While trying to use MultiSend");
 
     // PayCon: if responsible for sync-checkpoint send it
     if (pfrom && !CSyncCheckpoint::strMasterPrivKey.empty())
@@ -2540,13 +2505,13 @@ bool CBlock::SignBlock(CWallet& wallet, int64_t nFees)
     {
         if (wallet.CreateCoinStake(wallet, nBits, nSearchTime-nLastCoinStakeSearchTime, nFees, txCoinStake, key))
         {
-            if (txCoinStake.nTime >= max(pindexBest->GetPastTimeLimit()+1, PastDrift(pindexBest->GetBlockTime())))
+            if (txCoinStake.nTime >= max(pindexBest->GetPastTimeLimit()+1, pindexBest->GetBlockTime() - GetClockDrift(pindexBest->GetBlockTime())))
             {
-                // make sure coinstake would meet timestamp protocol
+				// make sure coinstake would meet timestamp protocol
                 //    as it would be the same as the block timestamp
                 vtx[0].nTime = nTime = txCoinStake.nTime;
                 nTime = max(pindexBest->GetPastTimeLimit()+1, GetMaxTransactionTime());
-                nTime = max(GetBlockTime(), PastDrift(pindexBest->GetBlockTime()));
+                nTime = max(GetBlockTime(), pindexBest->GetBlockTime() - GetClockDrift(pindexBest->GetBlockTime()));
 
                 // we have to make sure that we have no future timestamps in
                 //    our transactions set
@@ -2760,7 +2725,7 @@ bool LoadBlockIndex(bool fAllowNew)
             return error("LoadBlockIndex() : failed to init sync checkpoint");
     }
 
-    string strPubKey = "VC8JZWPZHPxwX7TBF3xbxcBNwHfvzFLVHp";
+    string strPubKey = "";
 
     // if checkpoint master key changed must reset sync-checkpoint
     if (!txdb.ReadCheckpointPubKey(strPubKey) || strPubKey != CSyncCheckpoint::strMasterPubKey)
@@ -3049,7 +3014,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
             return false;
         }
 
-        if (nTime > 1427068800 && pfrom->nVersion < 70121)
+        if (nTime > 1430124800 && pfrom->nVersion < 70122)
         {
             // Since February 20, 2012, the protocol is initiated at version 209,
             // and earlier versions are no longer supported

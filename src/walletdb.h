@@ -1,6 +1,6 @@
-// Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2012 The Bitcoin developers
-// Copyright (c) 2014 The PayCon developers
+// Copyright (c) 2009-2015 Satoshi Nakamoto
+// Copyright (c) 2009-2015 The Bitcoin developers
+// Copyright (c) 2015 The PayCon developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #ifndef BITCOIN_WALLETDB_H
@@ -144,6 +144,67 @@ public:
 	{
 		nWalletDBUpdated++;
 		return Write(std::string("stakeSplitThreshold"), nStakeSplitThreshold);
+	}
+		//presstab HyperStake
+	bool WriteMultiSend(std::vector<std::pair<std::string, int> > vMultiSend)
+	{
+		nWalletDBUpdated++;
+		bool ret = true;
+		for(unsigned int i = 0; i < vMultiSend.size(); i++)
+		{
+			std::pair<std::string, int> pMultiSend;
+			pMultiSend = vMultiSend[i];
+			if(!Write(std::make_pair(std::string("multisend"), i), pMultiSend, true))
+				ret = false;
+		}
+		return ret;
+	}
+	//presstab HyperStake
+	bool EraseMultiSend(std::vector<std::pair<std::string, int> > vMultiSend)
+	{
+		nWalletDBUpdated++;
+		bool ret = true;
+		for(unsigned int i = 0; i < vMultiSend.size(); i++)
+		{
+			std::pair<std::string, int> pMultiSend;
+			pMultiSend = vMultiSend[i];
+			if(!Erase(std::make_pair(std::string("multisend"), i)))
+				ret = false;
+		}
+		return ret;
+	}
+	//presstab HyperStake
+	bool WriteMSettings(bool fEnable, int nLastMultiSendHeight)
+	{
+		nWalletDBUpdated++;
+		std::pair<bool, int> pSettings;
+		pSettings.first = fEnable;
+		pSettings.second = nLastMultiSendHeight;
+		return Write(std::string("msettings"), pSettings, true);
+	}
+	//presstab HyperStake
+	bool WriteMSDisabledAddresses(std::vector<std::string> vDisabledAddresses)
+	{
+		nWalletDBUpdated++;
+		bool ret = true;
+		for(unsigned int i = 0; i < vDisabledAddresses.size(); i++)
+		{
+			if(!Write(std::make_pair(std::string("mdisabled"), i), vDisabledAddresses[i]))
+				ret = false;
+		}
+		return ret;
+	}
+	//presstab HyperStake
+	bool EraseMSDisabledAddresses(std::vector<std::string> vDisabledAddresses)
+	{
+		nWalletDBUpdated++;
+		bool ret = true;
+		for(unsigned int i = 0; i < vDisabledAddresses.size(); i++)
+		{
+			if(!Erase(std::make_pair(std::string("mdisabled"), i)))
+				ret = false;
+		}
+		return ret;
 	}
 	
     bool WriteDefaultKey(const CPubKey& vchPubKey)
