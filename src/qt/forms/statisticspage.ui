@@ -10,15 +10,14 @@
     <x>0</x>
     <y>0</y>
     <width>623</width>
-    <height>467</height>
+    <height>492</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Digging</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">color:#505050;
-font-family:'Open Sans,sans-serif';</string>
+   <string notr="true">font-family:'Open Sans, sans-serif';</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="sizeConstraint">
@@ -41,7 +40,7 @@ font-family:'Open Sans,sans-serif';</string>
      <widget class="QPushButton" name="startButton">
       <property name="geometry">
        <rect>
-        <x>39</x>
+        <x>40</x>
         <y>280</y>
         <width>141</width>
         <height>60</height>
@@ -82,7 +81,7 @@ font-family:'Open Sans,sans-serif';</string>
        <string/>
       </property>
       <property name="pixmap">
-       <pixmap resource="../bitcoin.qrc">:/icons/coinbg</pixmap>
+       <pixmap resource="../bitcoin.qrc">:/icons/yuno</pixmap>
       </property>
       <property name="scaledContents">
        <bool>true</bool>
@@ -207,7 +206,7 @@ font-family:'Open Sans,sans-serif';</string>
         <item row="8" column="0">
          <widget class="QLabel" name="label_8">
           <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Total Money Supply&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Money Supply&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
          </widget>
         </item>
@@ -282,7 +281,7 @@ font-family:'Open Sans,sans-serif';</string>
            </font>
           </property>
           <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:20px; font-weight:600; color:#000000;&quot;&gt;PayCon Statistics&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>PayCon Statistics</string>
           </property>
          </widget>
         </item>

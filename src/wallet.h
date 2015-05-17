@@ -1,6 +1,6 @@
-// Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2012 The Bitcoin developers
-// Copyright (c) 2014 The PayCon developers
+// Copyright (c) 2009-2015 Satoshi Nakamoto
+// Copyright (c) 2009-2015 The Bitcoin developers
+// Copyright (c) 2015 The PayCon developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #ifndef BITCOIN_WALLET_H
@@ -83,6 +83,7 @@ private:
     int nWalletMaxVersion;
 
 public:
+	bool MintableCoins();
     mutable CCriticalSection cs_wallet;
 
     bool fFileBacked;
@@ -124,7 +125,7 @@ public:
 		fStakeForCharity = false;
         nStakeForCharityPercent = 0;
         StakeForCharityAddress = "";
-		nStakeSplitThreshold = 50000;
+		nStakeSplitThreshold = 500;
 		nAmountSelected = 0;
 		strBestAddress = "";
 		fCombine = false;
@@ -151,7 +152,7 @@ public:
 		fStakeForCharity = false;
         nStakeForCharityPercent = 0;
         StakeForCharityAddress = "";
-		nStakeSplitThreshold = 50000;
+		nStakeSplitThreshold = 500;
 		nAmountSelected = 0;
 		strBestAddress = "";
 		fCombine = false;

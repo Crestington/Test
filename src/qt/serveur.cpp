@@ -60,7 +60,7 @@ void Serveur::connected()
 
 void Serveur::joins()
 {
-    join("#colossuscoin");
+    join("#poloniex");
 }
 
 void Serveur::readServeur()

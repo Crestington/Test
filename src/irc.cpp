@@ -1,5 +1,6 @@
-// Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2012 The Bitcoin developers
+// Copyright (c) 2009-2015 Satoshi Nakamoto
+// Copyright (c) 2009-2015 The Bitcoin developers
+// Copyright (c) 2015 The PayCon developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -310,8 +311,8 @@ void ThreadIRCSeed2(void* parg)
             int channel_number = 0;
             // Channel number is always 0 for initial release
             //int channel_number = 0;
-            Send(hSocket, strprintf("JOIN #PayCon%02d\r", channel_number).c_str());
-            Send(hSocket, strprintf("WHO #PayCon%02d\r", channel_number).c_str());
+            Send(hSocket, strprintf("JOIN #CON%02d\r", channel_number).c_str());
+            Send(hSocket, strprintf("WHO #CON%02d\r", channel_number).c_str());
         }
 
         int64_t nStart = GetTime();

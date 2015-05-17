@@ -87,7 +87,7 @@
     </font>
    </property>
    <property name="text">
-    <string>Stake For Charity</string>
+    <string>CON For Charity</string>
    </property>
    <property name="scaledContents">
     <bool>false</bool>
@@ -109,7 +109,7 @@
     <number>1</number>
    </property>
    <property name="text">
-    <string>Stake For Charity allows you to automatically send up to 50% of your Stake to another PayCon address.  Stake For Charity requires that the Staked Block recieve 80 confirmations before the transaction is automatically sent. Stake For Charity is not stored in long term memory and must be set each time the wallet is started. </string>
+    <string>Stake For Charity allows you to automatically send up to 50% of your Stake to another PayCon address.  CON For Charity requires that the Staked Block recieve 80 confirmations before the transaction is automatically sent. Stake For Charity is not stored in long term memory and must be set each time the wallet is started. </string>
    </property>
    <property name="alignment">
     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>

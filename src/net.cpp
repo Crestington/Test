@@ -1,6 +1,6 @@
-// Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2012 The Bitcoin developers
-// Copyright (c) 2014 The PayCon developers
+// Copyright (c) 2009-2015 Satoshi Nakamoto
+// Copyright (c) 2009-2015 The Bitcoin developers
+// Copyright (c) 2015 The PayCon developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -1143,8 +1143,8 @@ void MapPort()
 // The first name is used as information source for addrman.
 // The second name should resolve to a list of seed addresses.
 static const char *strDNSSeed[][2] = {
-    	{"", ""},
-
+        {"seed1.paycoin-dnsseed.ssdpool.com", "dnsseed.paycoin-dnsseed.ssdpool.com"},
+        {"", ""},
 };
 
 void ThreadDNSAddressSeed(void* parg)
@@ -1215,6 +1215,7 @@ void ThreadDNSAddressSeed2(void* parg)
 
 unsigned int pnSeed[] =
 { 
+	0x46ed9c5e,
 };
 
 void DumpAddresses()

@@ -1,6 +1,6 @@
-// Copyright (c) 2010 Satoshi Nakamoto
-// Copyright (c) 2009-2012 The Bitcoin developers
-// Copyright (c) 2014 The PayCon developers
+// Copyright (c) 2010-2015 Satoshi Nakamoto
+// Copyright (c) 2009-2015 The Bitcoin developers
+// Copyright (c) 2015 The PayCon developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -201,28 +201,28 @@ Value moneysupply(const Array& params, bool fHelp)
 	
 	//height of blocks
 	int64_t nHeight = pindexBest->nHeight; //present
-	int64_t n1Height = nHeight - 720; // day -- 720 blocks should be about 1 day if blocks have 120 sec spacing
-	int64_t n7Height = nHeight - 720 * 7; // week
-	int64_t n30Height = nHeight - 720 * 30; // month
+	int64_t n1Height = nHeight - 1440; // day -- 960 blocks should be about 1 day if blocks have 90 sec spacing
+	int64_t n7Height = nHeight - 1440 * 7; // week
+	int64_t n30Height = nHeight - 1440 * 30; // month
 	
 	//print to console
 	Object obj;
 	obj.push_back(Pair("moneysupply - present", GetMoneySupply(nHeight)));
-	obj.push_back(Pair("moneysupply - 720 blocks ago", GetMoneySupply(n1Height)));
-	obj.push_back(Pair("moneysupply - 5,040 blocks ago", GetMoneySupply(n7Height)));
-	obj.push_back(Pair("moneysupply - 21,600 blocks ago", GetMoneySupply(n30Height)));
+	obj.push_back(Pair("moneysupply - 1,440 blocks ago", GetMoneySupply(n1Height)));
+	obj.push_back(Pair("moneysupply - 10,080 blocks ago", GetMoneySupply(n7Height)));
+	obj.push_back(Pair("moneysupply - 43,200 blocks ago", GetMoneySupply(n30Height)));
 	
-	obj.push_back(Pair("supply change(last 720 blocks)", GetSupplyChange(nHeight, n1Height)));
-	obj.push_back(Pair("supply change(last 5,040 blocks)", GetSupplyChange(nHeight, n7Height)));
-	obj.push_back(Pair("supply change(last 21,600 blocks)", GetSupplyChange(nHeight, n30Height)));
+	obj.push_back(Pair("supply change(last 1,440 blocks)", GetSupplyChange(nHeight, n1Height)));
+	obj.push_back(Pair("supply change(last 10,080 blocks)", GetSupplyChange(nHeight, n7Height)));
+	obj.push_back(Pair("supply change(last 43,200 blocks)", GetSupplyChange(nHeight, n30Height)));
 	
-	obj.push_back(Pair("time change over 720 blocks", GetBlockSpeed(nHeight, n1Height)));
-	obj.push_back(Pair("time change over 5,040 blocks", GetBlockSpeed(nHeight, n7Height)));
-	obj.push_back(Pair("time change over 21,600 blocks", GetBlockSpeed(nHeight, n30Height)));
+	obj.push_back(Pair("time change over 1,440 blocks", GetBlockSpeed(nHeight, n1Height)));
+	obj.push_back(Pair("time change over 10,080 blocks", GetBlockSpeed(nHeight, n7Height)));
+	obj.push_back(Pair("time change over 43,200 blocks", GetBlockSpeed(nHeight, n30Height)));
 	
-	obj.push_back(Pair("avg daily rate of change (last 720 blocks)", GetRate(nHeight, n1Height)));
-	obj.push_back(Pair("avg daily rate of change (last 5,040 blocks)", GetRate(nHeight, n7Height)));
-	obj.push_back(Pair("avg daily rate of change (last 21,600 blocks)", GetRate(nHeight, n30Height)));
+	obj.push_back(Pair("avg daily rate of change (last 1,440 blocks)", GetRate(nHeight, n1Height)));
+	obj.push_back(Pair("avg daily rate of change (last 10,080 blocks)", GetRate(nHeight, n7Height)));
+	obj.push_back(Pair("avg daily rate of change (last 43,200 blocks)", GetRate(nHeight, n30Height)));
 	return obj;
 }
 
@@ -2035,7 +2035,7 @@ Value cclistcoins(const Array& params, bool fHelp)
 		if(dAge < nStakeMinAge)
 			nWeight = 0;
 		coutput.push_back(Pair("Weight", int(nWeight)));
-		double nReward = (MAX_MINT_PROOF_OF_STAKE/COIN) / 365 * dAge * dAmount;
+		double nReward = (MAX_MINT_PROOF_OF_STAKE2/COIN) / 365 * dAge * dAmount;
 		nReward = min(nReward, double(30));
 		coutput.push_back(Pair("Potential Stake", nReward));
 		result.push_back(coutput);
@@ -2144,7 +2144,7 @@ Value ccsend(const Array& params, bool fHelp)
     // Amount
     int64_t nAmount = AmountFromValue(params[1]);
 
-    if (nAmount < MIN_TX_FEE + 1)
+    if (nAmount < SOFT_MIN_TX_FEE + 1)
         throw JSONRPCError(-101, "Send amount too small");
 
     if (pwalletMain->IsLocked())

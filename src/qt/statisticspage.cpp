@@ -56,7 +56,7 @@ void StatisticsPage::updateStatistics()
     {
         phase = "X13 POW";
     }
-    else if (pindexBest->nHeight < 10000)
+    else if (pindexBest->nHeight < 60480)
     {
         phase = "POS + POW";
     }
@@ -66,17 +66,21 @@ void StatisticsPage::updateStatistics()
     }
 
     QString subsidy = "";
-    if(pindexBest->nHeight == 2)
+    if(pindexBest->nHeight < 5000)
     {
-        subsidy = "190000000 CON";
+        subsidy = "250 CON";
     }
-		else if(pindexBest->nHeight < 10000)
+		else if(pindexBest->nHeight < 15000)
     {
-        subsidy = "1000 CON";
+        subsidy = "150 CON";
     }
-        else if(pindexBest->nHeight < 1000000000)
+        else if(pindexBest->nHeight < 30000)
     {
-        subsidy = "5000 CON (POS only)";
+        subsidy = "75 CON";
+    }
+        else if(pindexBest->nHeight < 60480)
+    {
+        subsidy = "0 CON";
     }
     
 
