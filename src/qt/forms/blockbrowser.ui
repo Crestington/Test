@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>BlockBrowser</class>
- <widget class="QWidget" name="BlockBrowser">
+ <widget class="QDialog" name="BlockBrowser">
   <property name="windowModality">
    <enum>Qt::NonModal</enum>
   </property>
@@ -12,8 +12,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>794</width>
-    <height>405</height>
+    <width>850</width>
+    <height>500</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -32,7 +32,7 @@
    <bool>false</bool>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Block Browser</string>
   </property>
   <layout class="QGridLayout">
    <property name="sizeConstraint">
@@ -42,40 +42,50 @@
     <number>21</number>
    </property>
    <property name="topMargin">
-    <number>21</number>
+    <number>10</number>
    </property>
    <property name="rightMargin">
     <number>10</number>
    </property>
    <item row="1" column="0">
     <widget class="QWidget" name="widget" native="true">
-     <widget class="QWidget" name="layoutWidget">
+     <widget class="QWidget" name="layoutWidgetBE1">
       <property name="geometry">
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>699</width>
+        <width>822</width>
         <height>27</height>
        </rect>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_4">
+      <layout class="QHBoxLayout" name="horizontalLayoutBE">
        <property name="spacing">
         <number>7</number>
        </property>
        <item>
-        <widget class="QLabel" name="label_5">
+        <widget class="QLabel" name="labelBlockExplorer">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="font">
           <font>
-           <family>Open Sans,sans-serif</family>
+           <weight>75</weight>
+           <bold>true</bold>
           </font>
          </property>
+         <property name="styleSheet">
+          <string notr="true">font-weight:bold;</string>
+         </property>
          <property name="text">
-          <string>Block Explorer</string>
+          <string>Block Browser</string>
          </property>
         </widget>
        </item>
        <item>
-        <spacer name="horizontalSpacer_2">
+        <spacer name="horizontalSpacerBE">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -89,16 +99,16 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="layoutWidget_2">
+     <widget class="QWidget" name="layoutWidgetBE2">
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>50</y>
-        <width>701</width>
-        <height>400</height>
+        <y>30</y>
+        <width>812</width>
+        <height>410</height>
        </rect>
       </property>
-      <layout class="QGridLayout" name="gridLayout_3" rowstretch="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0" columnstretch="0,0">
+      <layout class="QGridLayout" name="gridLayoutBE" rowstretch="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0" columnstretch="0,0">
        <property name="sizeConstraint">
         <enum>QLayout::SetDefaultConstraint</enum>
        </property>
@@ -136,9 +146,12 @@
         </widget>
        </item>
        <item row="10" column="1">
-        <widget class="QLabel" name="pawBox">
+        <widget class="QLabel" name="hashRateBox">
          <property name="text">
-          <string>0000 KH/s</string>
+          <string>0000 MH/s</string>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
          </property>
         </widget>
        </item>
@@ -157,9 +170,12 @@
         </widget>
        </item>
        <item row="9" column="1">
-        <widget class="QLabel" name="hardBox">
+        <widget class="QLabel" name="diffBox">
          <property name="text">
           <string>0.00</string>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
          </property>
         </widget>
        </item>
@@ -167,6 +183,9 @@
         <widget class="QLabel" name="txID">
          <property name="text">
           <string>000</string>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
          </property>
         </widget>
        </item>
@@ -178,6 +197,9 @@
          <property name="alignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
          </property>
+         <property name="textInteractionFlags">
+          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+         </property>
         </widget>
        </item>
        <item row="14" column="1">
@@ -185,10 +207,13 @@
          <property name="text">
           <string/>
          </property>
+         <property name="textInteractionFlags">
+          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+         </property>
         </widget>
        </item>
        <item row="9" column="0">
-        <widget class="QLabel" name="hardLabel">
+        <widget class="QLabel" name="diffLabel">
          <property name="text">
           <string>Block Difficulty:</string>
          </property>
@@ -208,7 +233,7 @@
         </widget>
        </item>
        <item row="3" column="0">
-        <widget class="QLabel" name="heightLabel_2">
+        <widget class="QLabel" name="heightLabelBE2">
          <property name="text">
           <string>Block Height:</string>
          </property>
@@ -218,6 +243,9 @@
         <widget class="QLabel" name="timeBox">
          <property name="text">
           <string>0</string>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
          </property>
         </widget>
        </item>
@@ -247,19 +275,25 @@
          <property name="text">
           <string/>
          </property>
+         <property name="textInteractionFlags">
+          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+         </property>
         </widget>
        </item>
        <item row="10" column="0">
-        <widget class="QLabel" name="pawLabel">
+        <widget class="QLabel" name="hashRateLabel">
          <property name="text">
           <string>Block Hashrate:</string>
          </property>
         </widget>
        </item>
        <item row="3" column="1">
-        <widget class="QLabel" name="heightLabel">
+        <widget class="QLabel" name="heightLabelBE1">
          <property name="text">
           <string>0</string>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
          </property>
         </widget>
        </item>
@@ -282,6 +316,9 @@
          <property name="text">
           <string>0</string>
          </property>
+         <property name="textInteractionFlags">
+          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+         </property>
         </widget>
        </item>
        <item row="5" column="1">
@@ -294,6 +331,9 @@
          </property>
          <property name="text">
           <string>0x0</string>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
          </property>
         </widget>
        </item>
@@ -315,6 +355,9 @@
          <property name="alignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
          </property>
+         <property name="textInteractionFlags">
+          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+         </property>
         </widget>
        </item>
        <item row="6" column="0">
@@ -328,6 +371,9 @@
         <widget class="QLabel" name="nonceBox">
          <property name="text">
           <string>0</string>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
          </property>
         </widget>
        </item>
@@ -358,6 +404,9 @@
          <property name="text">
           <string>0x0</string>
          </property>
+         <property name="textInteractionFlags">
+          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+         </property>
         </widget>
        </item>
        <item row="12" column="0">
@@ -384,12 +433,25 @@
          <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
-           <height>40</height>
+           <height>20</height>
           </size>
          </property>
         </spacer>
        </item>
       </layout>
+     </widget>
+     <widget class="QPushButton" name="closeButton">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>450</y>
+        <width>75</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Close</string>
+      </property>
      </widget>
     </widget>
    </item>

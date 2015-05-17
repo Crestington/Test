@@ -72,10 +72,12 @@ private slots:
     void editLabel();
     void copyLabel();
     void copyAmount();
-    void copyTxID();
+	void copyTx();
+	void showBrowser();
 
 signals:
     void doubleClicked(const QModelIndex&);
+	void blockBrowserSignal(QString transactionId);
 
 public slots:
     void chooseDate(int idx);
