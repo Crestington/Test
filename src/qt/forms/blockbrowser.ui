@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>BlockBrowser</class>
- <widget class="QDialog" name="BlockBrowser">
+ <widget class="QWidget" name="BlockBrowser">
   <property name="windowModality">
    <enum>Qt::NonModal</enum>
   </property>
@@ -12,8 +12,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>850</width>
-    <height>500</height>
+    <width>794</width>
+    <height>405</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -42,50 +42,40 @@
     <number>21</number>
    </property>
    <property name="topMargin">
-    <number>10</number>
+    <number>21</number>
    </property>
    <property name="rightMargin">
     <number>10</number>
    </property>
    <item row="1" column="0">
     <widget class="QWidget" name="widget" native="true">
-     <widget class="QWidget" name="layoutWidgetBE1">
+     <widget class="QWidget" name="layoutWidget">
       <property name="geometry">
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>822</width>
+        <width>699</width>
         <height>27</height>
        </rect>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayoutBE">
+      <layout class="QHBoxLayout" name="horizontalLayout_4">
        <property name="spacing">
         <number>7</number>
        </property>
        <item>
-        <widget class="QLabel" name="labelBlockExplorer">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
+        <widget class="QLabel" name="label_5">
          <property name="font">
           <font>
-           <weight>75</weight>
-           <bold>true</bold>
+           <family>Open Sans,sans-serif</family>
           </font>
          </property>
-         <property name="styleSheet">
-          <string notr="true">font-weight:bold;</string>
-         </property>
          <property name="text">
-          <string>Block Browser</string>
+          <string>Block Explorer</string>
          </property>
         </widget>
        </item>
        <item>
-        <spacer name="horizontalSpacerBE">
+        <spacer name="horizontalSpacer_2">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -99,16 +89,16 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="layoutWidgetBE2">
+     <widget class="QWidget" name="layoutWidget_2">
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>30</y>
-        <width>812</width>
-        <height>410</height>
+        <y>50</y>
+        <width>701</width>
+        <height>400</height>
        </rect>
       </property>
-      <layout class="QGridLayout" name="gridLayoutBE" rowstretch="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0" columnstretch="0,0">
+      <layout class="QGridLayout" name="gridLayout_3" rowstretch="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0" columnstretch="0,0">
        <property name="sizeConstraint">
         <enum>QLayout::SetDefaultConstraint</enum>
        </property>
@@ -146,9 +136,9 @@
         </widget>
        </item>
        <item row="10" column="1">
-        <widget class="QLabel" name="hashRateBox">
+        <widget class="QLabel" name="pawBox">
          <property name="text">
-          <string>0000 MH/s</string>
+          <string>0000 KH/s</string>
          </property>
          <property name="textInteractionFlags">
           <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
@@ -170,7 +160,7 @@
         </widget>
        </item>
        <item row="9" column="1">
-        <widget class="QLabel" name="diffBox">
+        <widget class="QLabel" name="hardBox">
          <property name="text">
           <string>0.00</string>
          </property>
@@ -213,7 +203,7 @@
         </widget>
        </item>
        <item row="9" column="0">
-        <widget class="QLabel" name="diffLabel">
+        <widget class="QLabel" name="hardLabel">
          <property name="text">
           <string>Block Difficulty:</string>
          </property>
@@ -233,7 +223,7 @@
         </widget>
        </item>
        <item row="3" column="0">
-        <widget class="QLabel" name="heightLabelBE2">
+        <widget class="QLabel" name="heightLabel_2">
          <property name="text">
           <string>Block Height:</string>
          </property>
@@ -281,14 +271,14 @@
         </widget>
        </item>
        <item row="10" column="0">
-        <widget class="QLabel" name="hashRateLabel">
+        <widget class="QLabel" name="pawLabel">
          <property name="text">
           <string>Block Hashrate:</string>
          </property>
         </widget>
        </item>
        <item row="3" column="1">
-        <widget class="QLabel" name="heightLabelBE1">
+        <widget class="QLabel" name="heightLabel">
          <property name="text">
           <string>0</string>
          </property>
@@ -332,7 +322,7 @@
          <property name="text">
           <string>0x0</string>
          </property>
-         <property name="textInteractionFlags">
+	         <property name="textInteractionFlags">
           <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
          </property>
         </widget>

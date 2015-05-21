@@ -87,7 +87,7 @@ public:
     };
 
     // Send coins to a list of recipients
-    SendCoinsReturn sendCoins(const QList<SendCoinsRecipient> &recipients, int SplitBlock, const CCoinControl *coinControl=NULL);
+    SendCoinsReturn sendCoins(const QList<SendCoinsRecipient> &recipients, int nSplitBlock, const CCoinControl *coinControl=NULL);
 
     // Wallet encryption
     bool setWalletEncrypted(bool encrypted, const SecureString &passphrase);
@@ -97,12 +97,16 @@ public:
     // Wallet backup
     bool backupWallet(const QString &filename);
 	// Wallet Repair
-	void checkWallet(int& nMismatchSpent, qint64& nBalanceInQuestion, int& nOrphansFound);
-	void repairWallet(int& nMismatchSpent, qint64& nBalanceInQuestion, int& nOrphansFound);
+	void checkWallet(int& nMismatchSpent, int64_t& nBalanceInQuestion, int& nOrphansFound);
+	void repairWallet(int& nMismatchSpent, int64_t& nBalanceInQuestion, int& nOrphansFound);
 	// Pass coin control information
-	void getStakeWeightFromValue(const qint64& nTime, const qint64& nValue, quint64& nWeight);
+	void getStakeWeightFromValue(const int64_t nTime, const int64_t nValue, uint64_t& nWeight);
 	void setSplitBlock(bool fSplitBlock);
-	bool getSplitBlock();		
+	bool getSplitBlock();	
+	//Wallet Information about StakeForCharity
+	int getStakeForCharityPercent();
+	QString getStakeForCharityAddress();
+
     // RAI object for unlocking wallet, returned by requestUnlock()
     class UnlockContext
     {
@@ -124,7 +128,7 @@ public:
     };
 
     UnlockContext requestUnlock();
-	
+
     bool getPubKey(const CKeyID &address, CPubKey& vchPubKeyOut) const;
     void getOutputs(const std::vector<COutPoint>& vOutpoints, std::vector<COutput>& vOutputs);
     void listCoins(std::map<QString, std::vector<COutput> >& mapCoins) const;

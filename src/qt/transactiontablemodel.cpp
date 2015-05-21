@@ -19,8 +19,6 @@
 #include <QDateTime>
 #include <QtAlgorithms>
 
-#include <algorithm>
-
 // Amount column is right-aligned it contains numbers
 static int column_alignments[] = {
         Qt::AlignLeft|Qt::AlignVCenter,
@@ -225,7 +223,7 @@ TransactionTableModel::TransactionTableModel(CWallet* wallet, WalletModel *paren
         priv(new TransactionTablePriv(wallet, this)),
         cachedNumBlocks(0)
 {
-    columns << QString() << tr("Date") << tr("Type") << tr("Address/Label") << tr("Amount");
+    columns << QString() << tr("Date") << tr("Type") << tr("Address") << tr("Amount");
 
     priv->refreshWallet();
 
@@ -278,13 +276,11 @@ int TransactionTableModel::columnCount(const QModelIndex &parent) const
 QString TransactionTableModel::formatTxStatus(const TransactionRecord *wtx) const
 {
     QString status;
-    float rate, days;
-    CWalletTx tx, ptx;
 
     switch(wtx->status.status)
     {
     case TransactionStatus::OpenUntilBlock:
-        status = tr("Open for %n block(s)","",wtx->status.open_for);
+        status = tr("Open for %n more block(s)","",wtx->status.open_for);
         break;
     case TransactionStatus::OpenUntilDate:
         status = tr("Open until %1").arg(GUIUtil::dateTimeStr(wtx->status.open_for));
@@ -293,7 +289,7 @@ QString TransactionTableModel::formatTxStatus(const TransactionRecord *wtx) cons
         status = tr("Offline (%1 confirmations)").arg(wtx->status.depth);
         break;
     case TransactionStatus::Unconfirmed:
-        status = tr("Unconfirmed (%1 of %2 confirmations)").arg(wtx->status.depth).arg(TransactionRecord::NumConfirmations);
+        status = tr("Unconfirmed (%1 of %2 confirmations)").arg(wtx->status.depth).arg(TransactionRecord::RecommendedNumConfirmations);
         break;
     case TransactionStatus::HaveConfirmations:
         status = tr("Confirmed (%1 confirmations)").arg(wtx->status.depth);
@@ -306,29 +302,11 @@ QString TransactionTableModel::formatTxStatus(const TransactionRecord *wtx) cons
         case TransactionStatus::Immature:
             status += "\n" + tr("Mined balance will be available when it matures in %n more block(s)", "", wtx->status.matures_in);
             break;
-        case TransactionStatus::Mature:
-            if (wallet->GetTransaction(wtx->hash, tx)) {
-              if (tx.vin.size() == 1) {
-                rate = 100.0f * (wtx->credit + wtx->debit) / -wtx->debit;
-                if (wallet->GetTransaction(tx.vin[0].prevout.hash, ptx)) {
-                  days = (tx.nTime - ptx.nTime) / 86400.0f;
-                  status += "\n" + tr("%1% staked in %2 days").arg(rate).arg(days);
-                  if (wtx->credit + wtx->debit == 1000 * COIN) {
-                    uint64_t capped = -wtx->debit * 7.5f * days / 365.f - 1000 * COIN;
-                    status += "\n" + tr("About %1 CON capped").arg(capped / (float)COIN);
-					float unCappedStake = (capped / (float)COIN) + 1000;
-					status += "\n" + tr("Uncapped Stake: %1").arg((unCappedStake));
-					//status += "\n" +tr("Weight: %1").arg(unCappedStake * (days - (8/24)));
-                  }
-					float nWeight = (-wtx->debit)/(float)COIN * (std::min(days, (float)(30 - (8/24))) - 8/24);
-					status += "\n" + tr("Original UTXO: %1").arg((float)(-wtx->debit)/COIN);
-					status += "\n" + tr("Weight: %1").arg(nWeight);
-                }
-              }
-            }
-            break;
         case TransactionStatus::MaturesWarning:
             status += "\n" + tr("This block was not received by any other nodes and will probably not be accepted!");
+            break;
+        case TransactionStatus::Mature:
+            status += "\n" + tr("Generated and accepted, happy days!");
             break;
         case TransactionStatus::NotAccepted:
             status += "\n" + tr("Generated but not accepted");
@@ -479,8 +457,6 @@ QVariant TransactionTableModel::txStatusDecoration(const TransactionRecord *wtx)
             int part = (wtx->status.depth * 4 / total) + 1;
             return QIcon(QString(":/icons/transaction_%1").arg(part));
             }
-        case TransactionStatus::Mature:
-            return QIcon(":/icons/transaction_confirmed");
         case TransactionStatus::MaturesWarning:
         case TransactionStatus::NotAccepted:
             return QIcon(":/icons/transaction_0");

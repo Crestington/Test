@@ -1,28 +1,59 @@
 #include "blockbrowser.h"
 #include "ui_blockbrowser.h"
 #include "main.h"
+#include "wallet.h"
 #include "base58.h"
 #include "clientmodel.h"
-#include "db.h"
+#include "bitcoinrpc.h"
+#include "transactionrecord.h"
 
-double GetPoSKernelPS(const CBlockIndex* blockindex);
-double GetDifficulty(const CBlockIndex* blockindex);
-//double GetPoWMHashPS(const CBlockIndex* blockindex);
+#include <sstream>
+#include <string>
+double getBlockHardness(int height)
+{
+    const CBlockIndex* blockindex = getBlockIndex(height);
 
-using namespace std;
+    int nShift = (blockindex->nBits >> 24) & 0xff;
 
-const CBlockIndex* getBlockIndex(int64 height)
+    double dDiff =
+        (double)0x0000ffff / (double)(blockindex->nBits & 0x00ffffff);
+
+    while (nShift < 29)
+    {
+        dDiff *= 256.0;
+        nShift++;
+    }
+    while (nShift > 29)
+    {
+        dDiff /= 256.0;
+        nShift--;
+    }
+
+    return dDiff;
+}
+
+int getBlockHashrate(int height)
+{
+    int lookup = height;
+
+    double timeDiff = getBlockTime(height) - getBlockTime(1);
+    double timePerBlock = timeDiff / lookup;
+
+    return (boost::int64_t)(((double)getBlockHardness(height) * pow(2.0, 32)) / timePerBlock);
+}
+
+const CBlockIndex* getBlockIndex(int height)
 {
     std::string hex = getBlockHash(height);
     uint256 hash(hex);
     return mapBlockIndex[hash];
 }
 
-std::string getBlockHash(int64 Height)
+std::string getBlockHash(int Height)
 {
-    if(Height > pindexBest->nHeight) { return ""; }
-    if(Height < 0) { return ""; }
-    int64 desiredheight;
+    if(Height > pindexBest->nHeight) { return "351c6703813172725c6d660aa539ee6a3d7a9fe784c87fae7f36582e3b797058"; }
+    if(Height < 0) { return "351c6703813172725c6d660aa539ee6a3d7a9fe784c87fae7f36582e3b797058"; }
+    int desiredheight;
     desiredheight = Height;
     if (desiredheight < 0 || desiredheight > nBestHeight)
         return 0;
@@ -31,22 +62,10 @@ std::string getBlockHash(int64 Height)
     CBlockIndex* pblockindex = mapBlockIndex[hashBestChain];
     while (pblockindex->nHeight > desiredheight)
         pblockindex = pblockindex->pprev;
-    return  pblockindex->GetBlockHash().GetHex(); // pblockindex->phashBlock->GetHex();
+    return pblockindex->phashBlock->GetHex();
 }
 
-int64 getBlockTime(int64 Height)
-{
-    std::string strHash = getBlockHash(Height);
-    uint256 hash(strHash);
-
-    if (mapBlockIndex.count(hash) == 0)
-        return 0;
-
-    CBlockIndex* pblockindex = mapBlockIndex[hash];
-    return pblockindex->nTime;
-}
-
-std::string getBlockMerkle(int64 Height)
+int getBlockTime(int Height)
 {
     std::string strHash = getBlockHash(Height);
     uint256 hash(strHash);
@@ -56,10 +75,23 @@ std::string getBlockMerkle(int64 Height)
 
     CBlock block;
     CBlockIndex* pblockindex = mapBlockIndex[hash];
-    return pblockindex->hashMerkleRoot.ToString();//.substr(0,10).c_str();
+    return pblockindex->nTime;
 }
 
-int64 getBlocknBits(int64 Height)
+std::string getBlockMerkle(int Height)
+{
+    std::string strHash = getBlockHash(Height);
+    uint256 hash(strHash);
+
+    if (mapBlockIndex.count(hash) == 0)
+        return 0;
+
+    CBlock block;
+    CBlockIndex* pblockindex = mapBlockIndex[hash];
+    return pblockindex->hashMerkleRoot.ToString().substr(0,10).c_str();
+}
+
+int getBlocknBits(int Height)
 {
     std::string strHash = getBlockHash(Height);
     uint256 hash(strHash);
@@ -72,7 +104,7 @@ int64 getBlocknBits(int64 Height)
     return pblockindex->nBits;
 }
 
-int64 getBlockNonce(int64 Height)
+int getBlockNonce(int Height)
 {
     std::string strHash = getBlockHash(Height);
     uint256 hash(strHash);
@@ -85,6 +117,42 @@ int64 getBlockNonce(int64 Height)
     return pblockindex->nNonce;
 }
 
+std::string getBlockDebug(int Height)
+{
+    std::string strHash = getBlockHash(Height);
+    uint256 hash(strHash);
+
+    if (mapBlockIndex.count(hash) == 0)
+        return 0;
+
+    CBlock block;
+    CBlockIndex* pblockindex = mapBlockIndex[hash];
+    return pblockindex->ToString();
+}
+
+int blocksInPastHours(int hours)
+{
+    int wayback = hours * 3600;
+    bool check = true;
+    int height = pindexBest->nHeight;
+    int heightHour = pindexBest->nHeight;
+    int utime = (int)time(NULL);
+    int target = utime - wayback;
+
+    while(check)
+    {
+        if(getBlockTime(heightHour) < target)
+        {
+            check = false;
+            return height - heightHour;
+        } else {
+            heightHour = heightHour - 1;
+        }
+    }
+
+    return 0;
+}
+
 double getTxTotalValue(std::string txid)
 {
     uint256 hash;
@@ -93,7 +161,7 @@ double getTxTotalValue(std::string txid)
     CTransaction tx;
     uint256 hashBlock = 0;
     if (!GetTransaction(hash, tx, hashBlock))
-        return 0;
+        return 1000;
 
     CDataStream ssTx(SER_NETWORK, PROTOCOL_VERSION);
     ssTx << tx;
@@ -111,9 +179,8 @@ double getTxTotalValue(std::string txid)
     return value;
 }
 
-double convertCoins(int64 amount)
+double convertCoins(int64_t amount)
 {
-    // Tranz needs to use options model.
     return (double)amount / (double)COIN;
 }
 
@@ -125,20 +192,22 @@ std::string getOutputs(std::string txid)
     CTransaction tx;
     uint256 hashBlock = 0;
     if (!GetTransaction(hash, tx, hashBlock))
-        return "N/A";
+        return "fail";
+
+    CDataStream ssTx(SER_NETWORK, PROTOCOL_VERSION);
+    ssTx << tx;
 
     std::string str = "";
-    for (unsigned int i = (tx.IsCoinStake() ? 1 : 0); i < tx.vout.size(); i++)
+    for (unsigned int i = 0; i < tx.vout.size(); i++)
     {
         const CTxOut& txout = tx.vout[i];
-
-        CTxDestination address;
-        if (!ExtractDestination(txout.scriptPubKey, address) )
-            address = CNoDestination();
-
+        CTxDestination source;
+        ExtractDestination(txout.scriptPubKey, source);
+        CBitcoinAddress addressSource(source);
+        std::string lol7 = addressSource.ToString();
         double buffer = convertCoins(txout.nValue);
         std::string amount = boost::to_string(buffer);
-        str.append(CBitcoinAddress(address).ToString());
+        str.append(lol7);
         str.append(": ");
         str.append(amount);
         str.append(" CON");
@@ -156,141 +225,195 @@ std::string getInputs(std::string txid)
     CTransaction tx;
     uint256 hashBlock = 0;
     if (!GetTransaction(hash, tx, hashBlock))
-        return "N/A";
+        return "fail";
+
+    CDataStream ssTx(SER_NETWORK, PROTOCOL_VERSION);
+    ssTx << tx;
 
     std::string str = "";
     for (unsigned int i = 0; i < tx.vin.size(); i++)
     {
         uint256 hash;
         const CTxIn& vin = tx.vin[i];
-
         hash.SetHex(vin.prevout.hash.ToString());
         CTransaction wtxPrev;
         uint256 hashBlock = 0;
         if (!GetTransaction(hash, wtxPrev, hashBlock))
-             return "N/A";
+             return "fail";
 
-        CTxDestination address;
-        if (!ExtractDestination(wtxPrev.vout[vin.prevout.n].scriptPubKey, address) )
-            address = CNoDestination();
+        CDataStream ssTx(SER_NETWORK, PROTOCOL_VERSION);
+        ssTx << wtxPrev;
 
-        double buffer = convertCoins(wtxPrev.vout[vin.prevout.n].nValue);
+        CTxDestination source;
+        ExtractDestination(wtxPrev.vout[vin.prevout.n].scriptPubKey, source);
+        CBitcoinAddress addressSource(source);
+        std::string lol6 = addressSource.ToString();
+        const CScript target = wtxPrev.vout[vin.prevout.n].scriptPubKey;
+        double buffer = convertCoins(getInputValue(wtxPrev, target));
         std::string amount = boost::to_string(buffer);
-        str.append(CBitcoinAddress(address).ToString());
+        str.append(lol6);
         str.append(": ");
         str.append(amount);
-        str.append(" CON");
+        str.append("CON");
         str.append("\n");
     }
 
     return str;
 }
 
-double BlockBrowser::getTxFees(std::string txid)
+int64_t getInputValue(CTransaction tx, CScript target)
+{
+    for (unsigned int i = 0; i < tx.vin.size(); i++)
+    {
+        const CTxOut& txout = tx.vout[i];
+        if(txout.scriptPubKey == target)
+        {
+            return txout.nValue;
+        }
+    }
+    return 0;
+}
+
+double getTxFees(std::string txid)
 {
     uint256 hash;
     hash.SetHex(txid);
 
+
     CTransaction tx;
     uint256 hashBlock = 0;
-    CTxDB txdb("r");
-
     if (!GetTransaction(hash, tx, hashBlock))
-        return convertCoins(MIN_TX_FEE);
+        return 51;
 
-    MapPrevTx mapInputs;
-    map<uint256, CTxIndex> mapUnused;
-    bool fInvalid;
+    CDataStream ssTx(SER_NETWORK, PROTOCOL_VERSION);
+    ssTx << tx;
 
-    if (!tx.FetchInputs(txdb, mapUnused, false, false, mapInputs, fInvalid))
-        return convertCoins(MIN_TX_FEE);
+    double value = 0;
+    double buffer = 0;
+    for (unsigned int i = 0; i < tx.vout.size(); i++)
+    {
+        const CTxOut& txout = tx.vout[i];
 
-    int64 nTxFees = tx.GetValueIn(mapInputs)-tx.GetValueOut();
-
-    if(tx.IsCoinStake() || tx.IsCoinBase()) {
-        ui->feesLabel->setText(QString("Reward"));
-        nTxFees *= -1;
+        buffer = value + convertCoins(txout.nValue);
+        value = buffer;
     }
-    else
-        ui->feesLabel->setText(QString("Fees"));
 
-    return convertCoins(nTxFees);
+    double value0 = 0;
+    double buffer0 = 0;
+    for (unsigned int i = 0; i < tx.vin.size(); i++)
+    {
+        uint256 hash0;
+        const CTxIn& vin = tx.vin[i];
+        hash0.SetHex(vin.prevout.hash.ToString());
+        CTransaction wtxPrev;
+        uint256 hashBlock0 = 0;
+        if (!GetTransaction(hash0, wtxPrev, hashBlock0))
+             return 0;
+        CDataStream ssTx(SER_NETWORK, PROTOCOL_VERSION);
+        ssTx << wtxPrev;
+        const CScript target = wtxPrev.vout[vin.prevout.n].scriptPubKey;
+        buffer0 = value0 + convertCoins(getInputValue(wtxPrev, target));
+        value0 = buffer0;
+    }
+
+    return value0 - value;
 }
 
 
 BlockBrowser::BlockBrowser(QWidget *parent) :
-    QDialog(parent, (Qt::WindowMinMaxButtonsHint|Qt::WindowCloseButtonHint)),
+    QWidget(parent),
     ui(new Ui::BlockBrowser)
 {
     ui->setupUi(this);
 
-    setBaseSize(850, 500);
-
+    setFixedSize(400, 420);
+        
     connect(ui->blockButton, SIGNAL(pressed()), this, SLOT(blockClicked()));
     connect(ui->txButton, SIGNAL(pressed()), this, SLOT(txClicked()));
-    connect(ui->closeButton, SIGNAL(pressed()), this, SLOT(close()));
 }
 
 void BlockBrowser::updateExplorer(bool block)
-{
+{    
     if(block)
     {
-        int64 height = ui->heightBox->value();
+        ui->heightLabel->show();
+        ui->heightLabel_2->show();
+        ui->hashLabel->show();
+        ui->hashBox->show();
+        ui->merkleLabel->show();
+        ui->merkleBox->show();
+        ui->nonceLabel->show();
+        ui->nonceBox->show();
+        ui->bitsLabel->show();
+        ui->bitsBox->show();
+        ui->timeLabel->show();
+        ui->timeBox->show();
+        ui->hardLabel->show();
+        ui->hardBox->show();;
+        ui->pawLabel->show();
+        ui->pawBox->show();
+        int height = ui->heightBox->value();
         if (height > pindexBest->nHeight)
         {
             ui->heightBox->setValue(pindexBest->nHeight);
             height = pindexBest->nHeight;
         }
-
-        const CBlockIndex* pindex = getBlockIndex(height);
-
-        ui->heightLabelBE1->setText(QString::number(height));
-        ui->hashBox->setText(QString::fromUtf8(getBlockHash(height).c_str()));
-        ui->merkleBox->setText(QString::fromUtf8(getBlockMerkle(height).c_str()));
-        ui->bitsBox->setText(QString::number(getBlocknBits(height)));
-        ui->nonceBox->setText(QString::number(getBlockNonce(height)));
-        ui->timeBox->setText(QString::fromUtf8(DateTimeStrFormat(getBlockTime(height)).c_str()));
-        ui->diffBox->setText(QString::number(GetDifficulty(pindex), 'f', 6));
-        if (pindex->IsProofOfStake()) {
-            ui->hashRateLabel->setText("Block Network Stake Weight:");
-            ui->diffLabel->setText("PoS Block Difficulty:");
-            ui->hashRateBox->setText(QString::number(GetPoSKernelPS(pindex), 'f', 3) + " ");
-        }
-        else {
-            ui->hashRateLabel->setText("Block Hash Rate:");
-            ui->diffLabel->setText("PoW Block Difficulty:");
-            //ui->hashRateBox->setText(QString::number(GetPoWMHashPS(pindex), 'f', 3) + " MH/s");
-        }
-    }
-    else {
+        int Pawrate = getBlockHashrate(height);
+        double Pawrate2 = 0.000;
+        Pawrate2 = ((double)Pawrate / 1000);
+        std::string hash = getBlockHash(height);
+        std::string merkle = getBlockMerkle(height);
+        int nBits = getBlocknBits(height);
+        int nNonce = getBlockNonce(height);
+        int atime = getBlockTime(height);
+        double hardness = getBlockHardness(height);
+        QString QHeight = QString::number(height);
+        QString QHash = QString::fromUtf8(hash.c_str());
+        QString QMerkle = QString::fromUtf8(merkle.c_str());
+        QString QBits = QString::number(nBits);
+        QString QNonce = QString::number(nNonce);
+        QString QTime = QString::number(atime);
+        QString QHardness = QString::number(hardness, 'f', 6);
+        QString QPawrate = QString::number(Pawrate2, 'f', 3);
+        ui->heightLabel->setText(QHeight);
+        ui->hashBox->setText(QHash);
+        ui->merkleBox->setText(QMerkle);
+        ui->bitsBox->setText(QBits);
+        ui->nonceBox->setText(QNonce);
+        ui->timeBox->setText(QTime);     
+        ui->hardBox->setText(QHardness);
+        ui->pawBox->setText(QPawrate + " KH/s");
+    } 
+    
+    if(block == false) {
+        ui->txID->show();
+        ui->txLabel->show();
+        ui->valueLabel->show();
+        ui->valueBox->show();
+        ui->inputLabel->show();
+        ui->inputBox->show();
+        ui->outputLabel->show();
+        ui->outputBox->show();
+        ui->feesLabel->show();
+        ui->feesBox->show();
         std::string txid = ui->txBox->text().toUtf8().constData();
-
-        ui->valueBox->setText(QString::number(getTxTotalValue(txid), 'f', 6) + " CON");
-        ui->txID->setText(QString::fromUtf8(txid.c_str()));
-        ui->outputBox->setText(QString::fromUtf8(getOutputs(txid).c_str()));
-        ui->inputBox->setText(QString::fromUtf8(getInputs(txid).c_str()));
-        ui->feesBox->setText(QString::number(getTxFees(txid), 'f', 6) + " CON");
+        double value = getTxTotalValue(txid);
+        double fees = getTxFees(txid);
+        std::string outputs = getOutputs(txid);
+        std::string inputs = getInputs(txid);
+        QString QValue = QString::number(value, 'f', 6);
+        QString QID = QString::fromUtf8(txid.c_str());
+        QString QOutputs = QString::fromUtf8(outputs.c_str());
+        QString QInputs = QString::fromUtf8(inputs.c_str());
+        QString QFees = QString::number(fees, 'f', 6);
+        ui->valueBox->setText(QValue + " CON");
+        ui->txID->setText(QID);
+        ui->outputBox->setText(QOutputs);
+        ui->inputBox->setText(QInputs);
+        ui->feesBox->setText(QFees + " CON");
     }
 }
 
-void BlockBrowser::setTransactionId(const QString &transactionId)
-{
-    ui->txBox->setText(transactionId);
-    ui->txBox->setFocus();
-    updateExplorer(false);
-
-    uint256 hash;
-    hash.SetHex(transactionId.toStdString());
-
-    CTransaction tx;
-    uint256 hashBlock = 0;
-    if (GetTransaction(hash, tx, hashBlock))
-    {
-        CBlockIndex* pblockindex = mapBlockIndex[hashBlock];
-        ui->heightBox->setValue(pblockindex->nHeight);
-        updateExplorer(true);
-    }
-}
 
 void BlockBrowser::txClicked()
 {
