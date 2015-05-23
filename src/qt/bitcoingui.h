@@ -4,21 +4,20 @@
 #include <QMainWindow>
 #include <QSystemTrayIcon>
 
-#include "util.h" // for uint64_t
+#include "util.h" // for uint64
 
 class TransactionTableModel;
 class ClientModel;
 class WalletModel;
 class TransactionView;
 class OverviewPage;
-class StatisticsPage;
-class BlockBrowser;
-class ChatWindow;
 class AddressBookPage;
 class SendCoinsDialog;
 class SignVerifyMessageDialog;
 class Notificator;
 class RPCConsole;
+class StakeForCharityDialog;
+class BlockBrowser;
 
 QT_BEGIN_NAMESPACE
 class QLabel;
@@ -65,14 +64,13 @@ private:
     QStackedWidget *centralWidget;
 
     OverviewPage *overviewPage;
-	StatisticsPage *statisticsPage;
-	BlockBrowser *blockBrowser;
-	ChatWindow *chatWindow;
     QWidget *transactionsPage;
     AddressBookPage *addressBookPage;
     AddressBookPage *receiveCoinsPage;
     SendCoinsDialog *sendCoinsPage;
     SignVerifyMessageDialog *signVerifyMessageDialog;
+	StakeForCharityDialog *stakeForCharityDialog;
+	BlockBrowser *blockBrowser;
 
     QLabel *labelEncryptionIcon;
     QLabel *labelMintingIcon;
@@ -83,9 +81,6 @@ private:
 
     QMenuBar *appMenuBar;
     QAction *overviewAction;
-	QAction *statisticsAction;
-	QAction *blockAction;
-	QAction *chatAction;
     QAction *historyAction;
     QAction *quitAction;
     QAction *sendCoinsAction;
@@ -93,7 +88,6 @@ private:
     QAction *signMessageAction;
     QAction *verifyMessageAction;
     QAction *aboutAction;
-	QAction *charityAction;
     QAction *receiveCoinsAction;
     QAction *optionsAction;
     QAction *toggleHideAction;
@@ -106,11 +100,16 @@ private:
 	QAction *checkWalletAction;
 	QAction *repairWalletAction;
     QAction *aboutQtAction;
+    QAction *themeCustomAction;
     QAction *openRPCConsoleAction;
-	QAction *themeDefaultAction;
-	QAction *themeCustomAction;
+	QAction *blockAction;
+	QAction *blocksIconAction;
 	QAction *connectionIconAction;
 	QAction *stakingIconAction;
+	QAction *charityAction;
+	QAction *calcAction;
+	
+	
 
     QSystemTrayIcon *trayIcon;
     Notificator *notificator;
@@ -118,26 +117,24 @@ private:
     RPCConsole *rpcConsole;
 
     QMovie *syncIconMovie;
-
     QMovie *miningIconMovie;
 
-    uint64_t nMinMax;
-    uint64_t nWeight;
-    uint64_t nNetworkWeight;
-	uint64_t nHoursToMaturity;
-	uint64_t nAmount;
+    uint64 nMinMax;
+    uint64 nWeight;
+    uint64 nNetworkWeight;
+	uint64 nHoursToMaturity;
+	uint64 nAmount;
 	bool fMultiSend;
 	bool fMultiSendNotify;
 	int nCharityPercent;
 	QString strCharityAddress;
-	
-	/* Themes support */
+    /* Themes support */
     QString selectedTheme;
     QStringList themesList;
     // Path to directory where all themes are (usable for some common images?...)
     QString themesDir;
     QAction *customActions[100];
-    /* Themes support */
+    /* /Themes support */
 
     /** Create the main UI actions. */
     void createActions();
@@ -175,12 +172,6 @@ public slots:
 private slots:
     /** Switch to overview (home) page */
     void gotoOverviewPage();
-	/** Switch to Statistics page */
-	void gotoStatisticsPage();
-	/** Switch to block explorer*/
-    void gotoBlockBrowser();
-	/** Switch to Chat page */
-	void gotoChatPage();
     /** Switch to history (transactions) page */
     void gotoHistoryPage();
     /** Switch to address book page */
@@ -189,7 +180,8 @@ private slots:
     void gotoReceiveCoinsPage();
     /** Switch to send coins page */
     void gotoSendCoinsPage();
-
+	/** Switch to block browser page */
+	void gotoBlockBrowser(QString transactionId = "");
     /** Show Sign/Verify Message dialog and switch to sign message tab */
     void gotoSignMessageTab(QString addr = "");
     /** Show Sign/Verify Message dialog and switch to verify message tab */
@@ -200,8 +192,8 @@ private slots:
     void optionsClicked();
     /** Show about dialog */
     void aboutClicked();
-	/** Show Stake For Charity Dialog */
-    void charityClicked();
+	/** Show Stake Calculator Dialog */
+    void calcClicked();
 #ifndef Q_OS_MAC
     /** Handle tray icon clicked */
     void trayIconActivated(QSystemTrayIcon::ActivationReason reason);
@@ -229,7 +221,6 @@ private slots:
 	void unlockWallet();
 	/** Ask for passphrase to unlock wallet for the session to mint */
 	void unlockWalletForMint();
-
     /** Show window if hidden, unminimize when minimized, rise when obscured or show if hidden and fToggleHidden is true */
     void showNormalIfMinimized(bool fToggleHidden = false);
     /** simply calls showNormalIfMinimized(true) for use in SLOT() macro */

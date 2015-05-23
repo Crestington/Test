@@ -26,13 +26,11 @@ public:
         ProxyPort,         // int
         ProxySocksVersion, // int
         Fee,               // qint64
-        ReserveBalance,    // qint64
         DisplayUnit,       // BitcoinUnits::Unit
         DisplayAddresses,  // bool
         DetachDatabases,   // bool
         Language,          // QString
-        CoinControlFeatures, // bool
-        MinimizeCoinAge,   // bool
+		CoinControlFeatures, // bool
         OptionIDRowCount,
     };
 
@@ -47,12 +45,11 @@ public:
 
     /* Explicit getters */
     qint64 getTransactionFee();
-    qint64 getReserveBalance();
     bool getMinimizeToTray();
     bool getMinimizeOnClose();
     int getDisplayUnit();
     bool getDisplayAddresses();
-    bool getCoinControlFeatures();
+	bool getCoinControlFeatures();
     QString getLanguage() { return language; }
 
 private:
@@ -60,13 +57,12 @@ private:
     bool bDisplayAddresses;
     bool fMinimizeToTray;
     bool fMinimizeOnClose;
-    bool fCoinControlFeatures;
+	bool fCoinControlFeatures;
     QString language;
 
 signals:
     void displayUnitChanged(int unit);
-    void transactionFeeChanged(qint64);
-    void reserveBalanceChanged(qint64);
+	void transactionFeeChanged(qint64);
     void coinControlFeaturesChanged(bool);
 };
 

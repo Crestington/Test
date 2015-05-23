@@ -1,6 +1,5 @@
-// Copyright (c) 2009-2015 Satoshi Nakamoto
-// Copyright (c) 2009-2015 The Bitcoin developers
-// Copyright (c) 2015 The PayCon developers
+// Copyright (c) 2009-2010 Satoshi Nakamoto
+// Copyright (c) 2009-2012 The Bitcoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -128,7 +127,7 @@ bool Wait(int nSeconds)
     {
         if (fShutdown)
             return false;
-        MilliSleep(1000);
+        Sleep(1000);
     }
     return true;
 }
@@ -190,7 +189,7 @@ bool GetIPFromIRC(SOCKET hSocket, string strMyName, CNetAddr& ipRet)
 void ThreadIRCSeed(void* parg)
 {
     // Make this thread recognisable as the IRC seeding thread
-    RenameThread("PayCon-ircseed");
+    RenameThread("bitcoin-ircseed");
 
     try
     {
@@ -261,7 +260,7 @@ void ThreadIRCSeed2(void* parg)
         if (!fNoListen && GetLocal(addrLocal, &addrIPv4) && nNameRetry<3)
             strMyName = EncodeAddress(GetLocalAddress(&addrConnect));
         if (strMyName == "")
-            strMyName = strprintf("x%"PRIu64"", GetRand(1000000000));
+            strMyName = strprintf("x%"PRI64u"", GetRand(1000000000));
 
         Send(hSocket, strprintf("NICK %s\r", strMyName.c_str()).c_str());
         Send(hSocket, strprintf("USER %s 8 * : %s\r", strMyName.c_str(), strMyName.c_str()).c_str());
@@ -285,7 +284,7 @@ void ThreadIRCSeed2(void* parg)
                 return;
         }
         nNameRetry = 0;
-        MilliSleep(500);
+        Sleep(500);
 
         // Get our external IP from the IRC server and re-nick before joining the channel
         CNetAddr addrFromIRC;
@@ -303,19 +302,19 @@ void ThreadIRCSeed2(void* parg)
         }
 
         if (fTestNet) {
-            Send(hSocket, "JOIN #PayConTEST\r");
-            Send(hSocket, "WHO #PayConTEST\r");
+            Send(hSocket, "JOIN #PayConTEST2\r");
+            Send(hSocket, "WHO #PayConTEST2\r");
         } else {
             // randomly join #PayCon00-#PayCon05
-            //int channel_number = GetRandInt(5);
-            int channel_number = 0;
+            // int channel_number = GetRandInt(5);
+
             // Channel number is always 0 for initial release
-            //int channel_number = 0;
-            Send(hSocket, strprintf("JOIN #CON%02d\r", channel_number).c_str());
-            Send(hSocket, strprintf("WHO #CON%02d\r", channel_number).c_str());
+            int channel_number = 0;
+            Send(hSocket, strprintf("JOIN #PayCon%02d\r", channel_number).c_str());
+            Send(hSocket, strprintf("WHO #PayCon%02d\r", channel_number).c_str());
         }
 
-        int64_t nStart = GetTime();
+        int64 nStart = GetTime();
         string strLine;
         strLine.reserve(10000);
         while (!fShutdown && RecvLineIRC(hSocket, strLine))

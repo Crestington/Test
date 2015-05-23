@@ -1,6 +1,5 @@
-// Copyright (c) 2009-2015 Satoshi Nakamoto
-// Copyright (c) 2009-2015 The Bitcoin developers
-// Copyright (c) 2015 The PayCon developers
+// Copyright (c) 2009-2010 Satoshi Nakamoto
+// Copyright (c) 2009-2012 The Bitcoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #ifndef BITCOIN_WALLETDB_H
@@ -23,38 +22,6 @@ enum DBErrors
     DB_LOAD_FAIL,
     DB_NEED_REWRITE
 };
-
-class CKeyMetadata
-{
-public:
-    static const int CURRENT_VERSION=1;
-    int nVersion;
-    int64_t nCreateTime; // 0 means unknown
-
-    CKeyMetadata()
-    {
-        SetNull();
-    }
-    CKeyMetadata(int64_t nCreateTime_)
-    {
-        nVersion = CKeyMetadata::CURRENT_VERSION;
-        nCreateTime = nCreateTime_;
-    }
-
-    IMPLEMENT_SERIALIZE
-    (
-        READWRITE(this->nVersion);
-        nVersion = this->nVersion;
-        READWRITE(nCreateTime);
-    )
-
-    void SetNull()
-    {
-        nVersion = CKeyMetadata::CURRENT_VERSION;
-        nCreateTime = 0;
-    }
-};
-
 
 /** Access to the wallet database (wallet.dat) */
 class CWalletDB : public CDB
@@ -83,24 +50,15 @@ public:
         return Erase(std::make_pair(std::string("tx"), hash));
     }
 
-    bool WriteKey(const CPubKey& vchPubKey, const CPrivKey& vchPrivKey, const CKeyMetadata &keyMeta)
+    bool WriteKey(const CPubKey& vchPubKey, const CPrivKey& vchPrivKey)
     {
         nWalletDBUpdated++;
-
-        if(!Write(std::make_pair(std::string("keymeta"), vchPubKey), keyMeta))
-            return false;
-
         return Write(std::make_pair(std::string("key"), vchPubKey.Raw()), vchPrivKey, false);
     }
 
-    bool WriteCryptedKey(const CPubKey& vchPubKey, const std::vector<unsigned char>& vchCryptedSecret, const CKeyMetadata &keyMeta)
+    bool WriteCryptedKey(const CPubKey& vchPubKey, const std::vector<unsigned char>& vchCryptedSecret, bool fEraseUnencryptedKey = true)
     {
         nWalletDBUpdated++;
-        bool fEraseUnencryptedKey = true;
-
-        if(!Write(std::make_pair(std::string("keymeta"), vchPubKey), keyMeta))
-            return false;
-
         if (!Write(std::make_pair(std::string("ckey"), vchPubKey.Raw()), vchCryptedSecret, false))
             return false;
         if (fEraseUnencryptedKey)
@@ -134,18 +92,18 @@ public:
         return Read(std::string("bestblock"), locator);
     }
 
-    bool WriteOrderPosNext(int64_t nOrderPosNext)
+    bool WriteOrderPosNext(int64 nOrderPosNext)
     {
         nWalletDBUpdated++;
         return Write(std::string("orderposnext"), nOrderPosNext);
     }
-	
-	bool WriteStakeSplitThreshold(uint64_t nStakeSplitThreshold)
+	// presstab PayCon
+	bool WriteStakeSplitThreshold(uint64 nStakeSplitThreshold)
 	{
 		nWalletDBUpdated++;
 		return Write(std::string("stakeSplitThreshold"), nStakeSplitThreshold);
 	}
-		//presstab HyperStake
+	//presstab PayCon
 	bool WriteMultiSend(std::vector<std::pair<std::string, int> > vMultiSend)
 	{
 		nWalletDBUpdated++;
@@ -159,7 +117,7 @@ public:
 		}
 		return ret;
 	}
-	//presstab HyperStake
+	//presstab PayCon
 	bool EraseMultiSend(std::vector<std::pair<std::string, int> > vMultiSend)
 	{
 		nWalletDBUpdated++;
@@ -173,7 +131,7 @@ public:
 		}
 		return ret;
 	}
-	//presstab HyperStake
+	//presstab PayCon
 	bool WriteMSettings(bool fEnable, int nLastMultiSendHeight)
 	{
 		nWalletDBUpdated++;
@@ -182,7 +140,7 @@ public:
 		pSettings.second = nLastMultiSendHeight;
 		return Write(std::string("msettings"), pSettings, true);
 	}
-	//presstab HyperStake
+	//presstab PayCon
 	bool WriteMSDisabledAddresses(std::vector<std::string> vDisabledAddresses)
 	{
 		nWalletDBUpdated++;
@@ -194,7 +152,7 @@ public:
 		}
 		return ret;
 	}
-	//presstab HyperStake
+	//presstab PayCon
 	bool EraseMSDisabledAddresses(std::vector<std::string> vDisabledAddresses)
 	{
 		nWalletDBUpdated++;
@@ -206,25 +164,24 @@ public:
 		}
 		return ret;
 	}
-	
     bool WriteDefaultKey(const CPubKey& vchPubKey)
     {
         nWalletDBUpdated++;
         return Write(std::string("defaultkey"), vchPubKey.Raw());
     }
 
-    bool ReadPool(int64_t nPool, CKeyPool& keypool)
+    bool ReadPool(int64 nPool, CKeyPool& keypool)
     {
         return Read(std::make_pair(std::string("pool"), nPool), keypool);
     }
 
-    bool WritePool(int64_t nPool, const CKeyPool& keypool)
+    bool WritePool(int64 nPool, const CKeyPool& keypool)
     {
         nWalletDBUpdated++;
         return Write(std::make_pair(std::string("pool"), nPool), keypool);
     }
 
-    bool ErasePool(int64_t nPool)
+    bool ErasePool(int64 nPool)
     {
         nWalletDBUpdated++;
         return Erase(std::make_pair(std::string("pool"), nPool));
@@ -257,10 +214,10 @@ public:
     bool ReadAccount(const std::string& strAccount, CAccount& account);
     bool WriteAccount(const std::string& strAccount, const CAccount& account);
 private:
-    bool WriteAccountingEntry(const uint64_t nAccEntryNum, const CAccountingEntry& acentry);
+    bool WriteAccountingEntry(const uint64 nAccEntryNum, const CAccountingEntry& acentry);
 public:
     bool WriteAccountingEntry(const CAccountingEntry& acentry);
-    int64_t GetAccountCreditDebit(const std::string& strAccount);
+    int64 GetAccountCreditDebit(const std::string& strAccount);
     void ListAccountCreditDebit(const std::string& strAccount, std::list<CAccountingEntry>& acentries);
 
     DBErrors ReorderTransactions(CWallet*);
