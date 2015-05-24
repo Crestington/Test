@@ -72,7 +72,7 @@ private slots:
     void editLabel();
     void copyLabel();
     void copyAmount();
-	void copyTx();
+    void copyTxID();
 	void showBrowser();
 
 signals:

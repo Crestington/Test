@@ -1,4 +1,5 @@
-// Copyright (c) 2009-2012 The Bitcoin developers
+// Copyright (c) 2009-2015 The Bitcoin developers
+// Copyright (c) 2015 The PayCon developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #ifndef BITCOIN_CHECKPOINT_H
@@ -8,7 +9,13 @@
 #include "net.h"
 #include "util.h"
 
-#define CHECKPOINT_MAX_SPAN (60 * 60 * 4) // max 4 hours before latest block
+#define CHECKPOINT_MAX_SPAN (60 * 60) // max 1 hour before latest block
+
+#ifdef WIN32
+#undef STRICT
+#undef PERMISSIVE
+#undef ADVISORY
+#endif
 
 class uint256;
 class CBlockIndex;
@@ -19,6 +26,17 @@ class CSyncCheckpoint;
  */
 namespace Checkpoints
 {
+    /** Checkpointing mode */
+    enum CPMode
+    {
+        // Scrict checkpoints policy, perform conflicts verification and resolve conflicts
+        STRICT = 0,
+        // Advisory checkpoints policy, perform conflicts verification but don't try to resolve them
+        ADVISORY = 1,
+        // Permissive checkpoints policy, don't perform any checking
+        PERMISSIVE = 2
+    };
+
     // Returns true if block passes checkpoint checks
     bool CheckHardened(int nHeight, const uint256& hash);
 
@@ -44,10 +62,9 @@ namespace Checkpoints
     bool SetCheckpointPrivKey(std::string strPrivKey);
     bool SendSyncCheckpoint(uint256 hashCheckpoint);
     bool IsMatureSyncCheckpoint();
-    bool IsSyncCheckpointTooOld(unsigned int nSeconds);
 }
 
-// ppcoin: synchronized checkpoint
+// coin: synchronized checkpoint
 class CUnsignedSyncCheckpoint
 {
 public:

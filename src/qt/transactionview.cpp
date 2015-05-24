@@ -126,8 +126,8 @@ TransactionView::TransactionView(QWidget *parent) :
     QAction *copyAddressAction = new QAction(tr("Copy address"), this);
     QAction *copyLabelAction = new QAction(tr("Copy label"), this);
     QAction *copyAmountAction = new QAction(tr("Copy amount"), this);
-    QAction *editLabelAction = new QAction(tr("Edit label"), this);
 	QAction *copyTxID = new QAction(tr("Copy Tx ID"), this);
+    QAction *editLabelAction = new QAction(tr("Edit label"), this);
     QAction *showDetailsAction = new QAction(tr("Show transaction details"), this);
 	QAction *showBlockBrowser = new QAction(tr("Show transaction in block browser"), this);
 
@@ -135,11 +135,10 @@ TransactionView::TransactionView(QWidget *parent) :
     contextMenu->addAction(copyAddressAction);
     contextMenu->addAction(copyLabelAction);
     contextMenu->addAction(copyAmountAction);
-    contextMenu->addAction(editLabelAction);
 	contextMenu->addAction(copyTxID);
+    contextMenu->addAction(editLabelAction);
     contextMenu->addAction(showDetailsAction);
 	contextMenu->addAction(showBlockBrowser);
-	
 
     // Connect actions
     connect(dateWidget, SIGNAL(activated(int)), this, SLOT(chooseDate(int)));
@@ -153,11 +152,10 @@ TransactionView::TransactionView(QWidget *parent) :
     connect(copyAddressAction, SIGNAL(triggered()), this, SLOT(copyAddress()));
     connect(copyLabelAction, SIGNAL(triggered()), this, SLOT(copyLabel()));
     connect(copyAmountAction, SIGNAL(triggered()), this, SLOT(copyAmount()));
-    connect(editLabelAction, SIGNAL(triggered()), this, SLOT(editLabel()));
 	connect(copyTxID, SIGNAL(triggered()), this, SLOT(copyTx()));
+    connect(editLabelAction, SIGNAL(triggered()), this, SLOT(editLabel()));
     connect(showDetailsAction, SIGNAL(triggered()), this, SLOT(showDetails()));
 	connect(showBlockBrowser, SIGNAL(triggered()), this, SLOT(showBrowser()));
-	
 }
 
 void TransactionView::setModel(WalletModel *model)
@@ -187,12 +185,8 @@ void TransactionView::setModel(WalletModel *model)
                 TransactionTableModel::Date, 120);
         transactionView->horizontalHeader()->resizeSection(
                 TransactionTableModel::Type, 120);
-		#if QT_VERSION < 0x050000
         transactionView->horizontalHeader()->setResizeMode(
                 TransactionTableModel::ToAddress, QHeaderView::Stretch);
-		#else
-		transactionView->horizontalHeader()->setSectionResizeMode(TransactionTableModel::ToAddress, QHeaderView::Stretch);
-		#endif
         transactionView->horizontalHeader()->resizeSection(
                 TransactionTableModel::Amount, 100);
 
@@ -342,7 +336,7 @@ void TransactionView::copyAmount()
     GUIUtil::copyEntryData(transactionView, 0, TransactionTableModel::FormattedAmountRole);
 }
 
-void TransactionView::copyTx()
+void TransactionView::copyTxID()
 {
     GUIUtil::copyEntryData(transactionView, 0, TransactionTableModel::TxIDRole);
 }
@@ -414,7 +408,7 @@ void TransactionView::enableDateRangeWidget(bool enable)
 QWidget *TransactionView::createDateRangeWidget()
 {
     dateRangeWidget = new QFrame();
-    dateRangeWidget->setObjectName("rangeFrame");
+	dateRangeWidget->setObjectName("rangeFrame");
     dateRangeWidget->setFrameStyle(QFrame::Panel | QFrame::Raised);
     dateRangeWidget->setContentsMargins(1,1,1,1);
     QHBoxLayout *layout = new QHBoxLayout(dateRangeWidget);
